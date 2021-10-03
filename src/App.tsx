@@ -14,71 +14,64 @@ import { Layout } from "antd";
 import httpServices from "./services/httpServices";
 
 function App(props: any) {
-  const [userList, setUserList] = useState(null)
-  const [currentUser, setCurrentUser] = useState(null)
+  const [userList, setUserList] = useState(null);
+  const [currentUser, setCurrentUser] = useState(null);
+  const [currentRoom, setCurrentRoom] = useState(null);
 
   useEffect(() => {
-    const user = localStorage.getItem('user')
+    const user = localStorage.getItem("user");
     if (user) {
-      setCurrentUser((prev) => JSON.parse(user))
+      setCurrentUser((prev) => JSON.parse(user));
     }
     (async () => {
-      const res = await httpServices.getContacts()
-      setUserList((prev) => res)
-    })()
-  }, [])
+      const res = await httpServices.getContacts();
+      setUserList((prev) => res);
+    })();
+  }, []);
 
   const onUserSelect = (user: any) => {
-    setCurrentUser((prev) => user)
-    localStorage.setItem("user", JSON.stringify(user))
-  }
-
+    setCurrentUser((prev) => user);
+    localStorage.setItem("user", JSON.stringify(user));
+  };
   return (
     <div>
       <React.Fragment>
-        <div className="App-Container">
+        <div
+          className="App-Container"
+          style={{ display: "grid", placeItems: "center" }}
+        >
           <Router>
             <Switch>
-              {/* <Route
-                exact
-                path="/"
-                component={PromptFirstTimeUser}
-                {...props}
-              />
-              <Route
-                exact
-                path="/home"
-                component={PromptFirstTimeUser}
-                {...props}
-              /> */}
               <Route
                 exact
                 path="/"
-                render={props =>
+                render={(props) =>
                   currentUser ? (
-                    <Dashboard {...props} currentUser={currentUser} userList={userList} />
+                    <Dashboard
+                      {...props}
+                      currentUser={currentUser}
+                      userList={userList}
+                      currentRoom={currentRoom}
+                      setCurrentRoom={setCurrentRoom}
+                    />
                   ) : (
-                    <PromptFirstTimeUser {...props} onUserSelect={onUserSelect} userList={userList} currentUser={currentUser} />
-                  )
+                    <PromptFirstTimeUser
+                      {...props}
+                        onUserSelect={onUserSelect}
+                        userList={userList}
+                        currentUser={currentUser}
+                      />
+                    )
                 }
               />
               <Route
                 exact
-                path="/dashboard"
-                render={props =>
-                (
-                  <Dashboard {...props} currentUser={currentUser} userList={userList} />
-                )
-                }
-              />
-              <Route
-                exact
-                path="/conversation"
-                component={Conversations}
-                {...props}
+                path="/conversation/:roomId"
+                render={(props) => (
+                  <Conversations {...props} currentUser={currentUser} />
+                )}
               />
               <Route exact path="/chat" component={Chat} {...props} />
-
             </Switch>
           </Router>
         </div>
