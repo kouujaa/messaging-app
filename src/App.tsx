@@ -1,17 +1,16 @@
-import React, { useState, useEffect } from "react";
-import "antd/dist/antd.css";
+import React, { useState, useEffect } from 'react';
+import 'antd/dist/antd.css';
 import {
   Switch,
   Route,
   withRouter,
   BrowserRouter as Router,
-} from "react-router-dom";
-import Conversations from "./components/Conversations";
-import Chat from "./components/Chat";
-import Dashboard from "./components/Dashboard";
-import PromptFirstTimeUser from "./components/PromptFirstTimeUser";
-import { Layout } from "antd";
-import httpServices from "./services/httpServices";
+} from 'react-router-dom';
+import Conversations from './components/Conversations';
+import Dashboard from './components/Dashboard';
+import PromptFirstTimeUser from './components/PromptFirstTimeUser';
+import httpServices from './services/httpServices';
+import CreateRoom from './components/CreateRoom';
 
 function App(props: any) {
   const [userList, setUserList] = useState(null);
@@ -19,7 +18,7 @@ function App(props: any) {
   const [currentRoom, setCurrentRoom] = useState(null);
 
   useEffect(() => {
-    const user = localStorage.getItem("user");
+    const user = localStorage.getItem('user');
     if (user) {
       setCurrentUser((prev) => JSON.parse(user));
     }
@@ -31,20 +30,19 @@ function App(props: any) {
 
   const onUserSelect = (user: any) => {
     setCurrentUser((prev) => user);
-    localStorage.setItem("user", JSON.stringify(user));
+    localStorage.setItem('user', JSON.stringify(user));
   };
   return (
-    <div>
+    <div style={{ display: 'grid', placeItems: 'center' }}>
       <React.Fragment>
         <div
-          className="App-Container"
-          style={{ display: "grid", placeItems: "center" }}
+          style={{ display: 'grid', placeItems: 'center', width: '100%' }}
         >
           <Router>
             <Switch>
               <Route
                 exact
-                path="/"
+                path='/'
                 render={(props) =>
                   currentUser ? (
                     <Dashboard
@@ -57,21 +55,27 @@ function App(props: any) {
                   ) : (
                     <PromptFirstTimeUser
                       {...props}
-                        onUserSelect={onUserSelect}
-                        userList={userList}
-                        currentUser={currentUser}
-                      />
-                    )
+                      onUserSelect={onUserSelect}
+                      userList={userList}
+                      currentUser={currentUser}
+                    />
+                  )
                 }
               />
               <Route
                 exact
-                path="/conversation/:roomId"
+                path='/conversation/:roomId'
                 render={(props) => (
                   <Conversations {...props} currentUser={currentUser} />
                 )}
               />
-              <Route exact path="/chat" component={Chat} {...props} />
+              <Route
+                exact
+                path='/createRoom'
+                render={(props) => (
+                  <CreateRoom {...props} currentUser={currentUser} />
+                )}
+              />
             </Switch>
           </Router>
         </div>

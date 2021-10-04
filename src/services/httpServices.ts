@@ -1,13 +1,6 @@
 import http from "../http-common";
-// import ITutorialData from "../types/tutorial.type"
 type Content = {
   content: String;
-};
-type Contact = {
-  id: Number;
-  name: String;
-  created_at: String;
-  updated_at: String;
 };
 class HttpService {
   getContacts = async () => {

@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
-import { Button, Typography, Input, Form } from "antd";
+import { Button, Typography, Input } from "antd";
+import { ArrowLeftOutlined } from "@ant-design/icons";
 import httpServices from "../services/httpServices";
 import MessageCard from "./cards/MessageCard";
-import StartNewConversation from "./StartNewConversation";
 import { useParams } from "react-router-dom";
 const { Title } = Typography;
 
@@ -21,16 +21,15 @@ const Conversations = (props: any) => {
     const getMessages = async (id: string) => {
       const res: any = await httpServices.getConversationMessages(
         id,
-        currentUser.id
+        currentUser?.id
       );
       if (res) {
-        //enrich meassage object
         const enrichedResponse: any = await Promise.all(
           res.map(
             async (e: any) =>
               await httpServices.getConversationMessage(
                 id,
-                e.id,
+                e?.id,
                 currentUser.id
               )
           )
@@ -42,6 +41,7 @@ const Conversations = (props: any) => {
     setCurrentRoomTitle(location.state.data.title);
     getMessages(roomId);
   }, [roomId, location, currentUser]);
+
 
   const onMessageSend = async (e: any) => {
     if (currentMessage) {
@@ -56,22 +56,27 @@ const Conversations = (props: any) => {
   };
 
   return (
-    <div>
-      {roomMessages.length ? (
+    <div style={{ minWidth: "60%" }}>
+      {roomMessages ? (
         <>
-          <Title>
-            <nav
-              onClick={() => {
-                props.history.goBack();
-              }}
-            >
-              {currentRoomTitle}
-            </nav>
+          <Title
+            style={{ textAlign: "left", fontSize: "400" }}
+            onClick={() => {
+              props.history.goBack();
+            }}
+          >
+            <ArrowLeftOutlined
+              style={{ marginRight: "20px", cursor: "pointer" }}
+            />
+            {currentRoomTitle}
           </Title>
-          {roomMessages.map((message) => (
-            <MessageCard message={message} />
-          ))}
-          <div className="Conversations">
+          <div style={{ height: "80vh", overflow: "scroll" }}>
+            {roomMessages.map((message) => (
+              <MessageCard message={message} currentUserId={currentUser?.id} />
+            ))}
+          </div>
+
+          <div style={{ display: "flex", justifyContent: "space-between" }}>
             <Input
               allowClear
               style={{ width: "80%" }}
@@ -92,9 +97,7 @@ const Conversations = (props: any) => {
             </Button>
           </div>
         </>
-      ) : (
-        <StartNewConversation />
-      )}
+      ) : null}
     </div>
   );
 };
